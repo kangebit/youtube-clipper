@@ -993,7 +993,7 @@ if process_button:
             st.write("Mengunduh video utama dari YouTube...")
             ydl_opts = {
                 "outtmpl": os.path.join(DOWNLOAD_FOLDER, "video.%(ext)s"),
-                "format": "bestvideo[height<=720]+bestaudio/best[height<=720]/best",
+                "format": "best[ext=mp4]/best",
                 "merge_output_format": "mp4",
                 "noplaylist": True,
                 "retries": 10,
