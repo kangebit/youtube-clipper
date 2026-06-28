@@ -999,14 +999,39 @@ if process_button:
                 "retries": 10,
                 "fragment_retries": 10,
                 "progress_hooks": [create_yt_dlp_hook(live_log)],
+                # === FIX HTTP 403 ERROR ===
+                "http_headers": {
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+                    "Accept-Language": "en-US,en;q=0.9",
+                    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+                    "Referer": "https://www.youtube.com/"
+                },
+                "socket_timeout": 30,
+                "skip_unavailable_fragments": True,
+                "prefer_insecure": False,
+                "youtube_include_dash_manifest": True,
+                "extractor_args": {
+                    "youtube": {
+                        "player_client": ["web"],
+                        "player_skip_js": False
+                    }
+                }
             }
 
             if os.path.exists(COOKIE_FILE):
                 ydl_opts["cookiefile"] = COOKIE_FILE
                 st.write(f"Menggunakan cookie file: {COOKIE_FILE}")
 
-            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-                ydl.download([youtube_url])
+            try:
+                with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                    ydl.download([youtube_url])
+            except Exception as e:
+                if "403" in str(e) or "Forbidden" in str(e):
+                    st.error("❌ YouTube menolak download. Ini karena YouTube melindungi dari automated download dari server cloud.")
+                    st.warning("💡 Solusi: Coba gunakan video dari platform lain atau hubungi support.")
+                    st.stop()
+                else:
+                    raise
 
             video_files = [f for f in os.listdir(DOWNLOAD_FOLDER) if f.lower().endswith((".mp4", ".mkv", ".webm"))]
             if not video_files:
