@@ -909,6 +909,34 @@ st.markdown(
     unsafe_allow_html=True
 )
 
+st.markdown("### ⚙️ Setup API (WAJIB!)")
+st.info("🔑 Setiap orang perlu input API Key mereka sendiri. Bukan pakai punya orang lain.")
+
+with st.expander("📖 Cara Mendapatkan Gemini API Key (Klik Buka)", expanded=False):
+    st.markdown("""
+    **Langkah 1-5:**
+    1. Buka: https://aistudio.google.com/app/apikey
+    2. Klik **"Create API Key"**
+    3. Pilih **"Create API key in new project"**
+    4. Copy API Key yang muncul
+    5. Paste di form bawah ini
+    """)
+
+gemini_api_key = st.text_input(
+    "Masukkan Gemini API Key Kamu",
+    type="password",
+    placeholder="AIzaSy... (paste API Key mu di sini)"
+)
+
+if not gemini_api_key:
+    st.warning("⚠️ Gemini API Key belum diisi. Aplikasi tidak bisa berjalan tanpa ini.")
+    st.stop()
+
+# Set ke environment variable untuk function get_timestamps_from_gemini
+os.environ["GEMINI_API_KEY"] = gemini_api_key
+st.success("✅ Gemini API Key sudah tersimpan di session ini.")
+st.divider()
+
 st.markdown("### Input Konten")
 youtube_url = st.text_input("Link YouTube Sumber", placeholder="Tempel link YouTube panjang yang ingin diambil klipnya di sini")
 st.caption("AI akan menganalisis konten video ini secara otomatis untuk mendeteksi momen paling seru.")
